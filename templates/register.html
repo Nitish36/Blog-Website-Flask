@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form action="" method="POST">
+
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4"> Join Today </legend>
+                <div class="form-group">
+                    <label for="username">First Name</label>
+		            <input type="text" name="username" class="form-control" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+		            <input type="email" name="email" class="form-control" id="email" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+		            <input type="password" name="password1" class="form-control" id="password1" placeholder="Enter password1">
+                </div>
+                <div class="form-group">
+                    <label for="password"> Confirm Password</label>
+		            <input type="password" name="password2" class="form-control" id="password2" placeholder="Enter Confirm password2">
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div class="border-top pt-3">
+                <small class="text-muted">
+                    <p>Already have an account ?? <a href="/login">Login</a></p>
+                </small>
+            </div>
+        </form>
+    </div>
+{% endblock %}
