@@ -7,9 +7,6 @@
     <li class="list-group-item">
         <h1>Title: {{note.title}}</h1>
         {{ note.data }}
-        <button type="button" class="close" onClick="deleteNote({{ note.id }})">
-        <span aria-hidden="true">&times;</span>
-        </button>
     </li>
     {% endfor %}
     </ul>

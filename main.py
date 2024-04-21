@@ -153,15 +153,15 @@ def post(post_id):
     return render_template('post.html', title=post.title, post=post, user=current_user)
 
 
-@app.route('/delete-note', methods=['POST'])
-def delete_post():
-    note = json.loads(request.content)
-    noteId = note['noteId']
-    note = Post.query.get(noteId)
-    if note.user_id == current_user.id:
-        db.session.delete(note)
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get(post_id)
+    if post.user_id == current_user.id:
+        db.session.delete(post)
         db.session.commit()
-    return jsonify({}) 
+        flash("Post deleted successfully", 'success')
+    return redirect(url_for('home'))
 
 
 if __name__ == "__main__":
