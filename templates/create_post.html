@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 align="center">Notes</h1>
+    <ul class="list-group list-group-flush" id="notes">
+    <legend class="border-bottom mb-4">{{ legend }}</legend>
+    {% for note in user.notes %}
+    <li class="list-group-item">
+        <h1>Title: {{note.title}}</h1>
+        {{ note.data }}
+        <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </li>
+    {% endfor %}
+    </ul>
+    <div class="card">
+    <div class="card-body">
+        <form method="POST">
+        <label for="title">Title</label>
+        <input type="text" name="title">
+        <textarea name="note" id="note" class="form-control"></textarea>
+        <br />
+        <div align="center">
+            <button type="submit" class="btn btn-success">Post</button>
+        </div>
+        </form>
+    </div>
+    </div>
+
+
+{% endblock content %}

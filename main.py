@@ -1,9 +1,10 @@
-from flask import Flask, render_template, url_for, request, flash, redirect
+from flask import Flask, render_template, url_for, request, flash, redirect, jsonify, abort
 from flask_login import UserMixin, current_user, login_user, logout_user, login_required, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
+import json
 
 
 def secret_key():
@@ -33,7 +34,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(150), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
-    #backref used to get the author
+    # backref used to get the author
 
     def __repr__(self):
         return f"User('{self.username}','{self.email}','{self.image_file}')"
@@ -50,25 +51,10 @@ class Post(db.Model):
         return f"Post('{self.title}','{self.date_posted}')"
     
     
-posts = [
-    {
-        'author': 'Corey Schafer',
-        'title': 'Blog Post 1',
-        'content': 'First Post Content',
-        'date_posted': 'April 20,2018'
-    },
-    {
-        'author': 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted': 'April 20,2018'
-    }
-]
-
-
 @app.route('/')
 @app.route('/home')
 def home():
+    posts = Post.query.all()
     return render_template("home.html", posts=posts, user=current_user)
 
 
@@ -135,11 +121,47 @@ def account():
     image_file = url_for('static', filename='image/'+current_user.image_file)
     return render_template("account.html", title="Account", image_file=image_file, user=current_user)
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route('/post/new', methods=["GET", "POST"])
+@login_required
+def new_post():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        note = request.form.get('note')
+
+        if len(note) < 1:
+            flash('Note is too short!', category='error')
+        else:
+            new_note = Post(title=title, content=note, author=current_user)
+            db.session.add(new_note)
+            db.session.commit()
+            flash('Post added!', category='success')
+            return redirect(url_for("home"))
+    return render_template("create_post.html", title="New Post" ,user=current_user, legend="New Post")
+
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post, user=current_user)
+
+
+@app.route('/delete-note', methods=['POST'])
+def delete_post():
+    note = json.loads(request.content)
+    noteId = note['noteId']
+    note = Post.query.get(noteId)
+    if note.user_id == current_user.id:
+        db.session.delete(note)
+        db.session.commit()
+    return jsonify({}) 
 
 
 if __name__ == "__main__":

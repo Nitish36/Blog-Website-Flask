@@ -25,6 +25,7 @@
                 {% if user.is_authenticated %}
                     <div class="navbar-nav mr-auto">
                         <a class="nav-item nav-link" href="/">Home</a>
+                        <a class="nav-item nav-link" href="{{url_for('new_post')}}">New Post</a>
                         <a class="nav-item nav-link" href="/account">Account</a>
                         <a class="nav-item nav-link" href="/about">About</a>
                         <a class="nav-item nav-link" id="logout" href="/logout">Log out</a>
